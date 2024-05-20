@@ -1,8 +1,9 @@
 package util;
 
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
 public class Zlib {
@@ -17,5 +18,21 @@ public class Zlib {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ByteArrayOutputStream compress(String uncompressedString) {
+        Deflater deflater = new Deflater();
+        deflater.setInput(uncompressedString.getBytes());
+        deflater.finish();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+
+        while (!deflater.finished()) {
+            int compressedLength = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, compressedLength);
+        }
+
+        return outputStream;
     }
 }
